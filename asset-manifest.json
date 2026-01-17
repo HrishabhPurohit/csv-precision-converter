@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/csv-precision-converter/static/css/main.862700bc.css",
+    "main.js": "/csv-precision-converter/static/js/main.1e8d8411.js",
+    "index.html": "/csv-precision-converter/index.html",
+    "main.862700bc.css.map": "/csv-precision-converter/static/css/main.862700bc.css.map",
+    "main.1e8d8411.js.map": "/csv-precision-converter/static/js/main.1e8d8411.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.862700bc.css",
+    "static/js/main.1e8d8411.js"
+  ]
+}
