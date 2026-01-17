@@ -1,0 +1,242 @@
+.output-preview {
+  background: white;
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.preview-header h2 {
+  margin: 0;
+  color: #333;
+}
+
+.btn-export {
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.btn-export:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+}
+
+.format-info {
+  background: #f0f8ff;
+  border-radius: 6px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.format-info p {
+  margin: 0 0 0.5rem;
+  color: #555;
+  font-weight: 500;
+}
+
+.format-info ul {
+  margin: 0;
+  padding-left: 1.5rem;
+}
+
+.format-info li {
+  margin: 0.25rem 0;
+  color: #666;
+}
+
+.row-type-badge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  margin-right: 0.5rem;
+}
+
+.row-type-badge.header,
+.row-type-badge.header-row {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #4caf50;
+}
+
+.row-type-badge.transaction,
+.row-type-badge.transaction-row {
+  background: #fff3e0;
+  color: #e65100;
+  border: 1px solid #ff9800;
+}
+
+.row-type-badge.footer,
+.row-type-badge.footer-row {
+  background: #f3e5f5;
+  color: #6a1b9a;
+  border: 1px solid #9c27b0;
+}
+
+.table-container {
+  overflow-x: auto;
+  margin-bottom: 2rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.preview-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.preview-table thead {
+  background: #f5f5f5;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.preview-table th {
+  padding: 0.75rem 0.5rem;
+  text-align: center;
+  font-weight: 600;
+  border: 1px solid #ddd;
+  background: #f5f5f5;
+}
+
+.preview-table tbody tr {
+  transition: background 0.2s ease;
+}
+
+.preview-table tbody tr:hover {
+  background: #f9f9f9;
+}
+
+.preview-table tbody tr.header-row {
+  background: #f0fdf4;
+}
+
+.preview-table tbody tr.transaction-row {
+  background: #fffbf0;
+}
+
+.preview-table tbody tr.footer-row {
+  background: #fdf4ff;
+}
+
+.preview-table td {
+  padding: 0.5rem;
+  border: 1px solid #e0e0e0;
+  text-align: center;
+}
+
+.row-number {
+  background: #f9f9f9;
+  font-weight: 600;
+  color: #666;
+  width: 50px;
+  position: sticky;
+  left: 0;
+}
+
+.cell-value {
+  display: block;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.output-summary {
+  background: #f9f9f9;
+  border-radius: 6px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.output-summary h3 {
+  margin: 0 0 1rem;
+  color: #333;
+  font-size: 1.1rem;
+}
+
+.summary-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.stat {
+  background: white;
+  padding: 0.75rem;
+  border-radius: 4px;
+  border: 1px solid #e0e0e0;
+}
+
+.stat label {
+  display: block;
+  color: #666;
+  font-size: 0.85rem;
+  margin-bottom: 0.25rem;
+}
+
+.stat span {
+  display: block;
+  color: #333;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.stat span.success {
+  color: #27ae60;
+}
+
+.export-section {
+  text-align: center;
+  padding: 2rem;
+  background: linear-gradient(135deg, #f0f8ff 0%, #fff 100%);
+  border-radius: 6px;
+}
+
+.btn-export-large {
+  background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+  color: white;
+  border: none;
+  padding: 1rem 3rem;
+  font-size: 1.2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+}
+
+.btn-export-large:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(39, 174, 96, 0.3);
+}
+
+.export-note {
+  color: #666;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+}
+
+.no-data {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #999;
+  font-size: 1.1rem;
+}

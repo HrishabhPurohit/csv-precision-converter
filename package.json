@@ -1,0 +1,79 @@
+{
+  "name": "csv-precision-converter",
+  "version": "1.0.0",
+  "productName": "CSV Precision Converter",
+  "description": "Visual CSV converter with cell-level mapping for medical invoices",
+  "main": "electron/main.js",
+  "homepage": "https://HrishabhPurohit.github.io/csv-precision-converter",
+  "author": "CSV Precision",
+  "license": "Proprietary",
+  "scripts": {
+    "start": "concurrently \"npm run react\" \"wait-on http://localhost:3000 && npm run electron\"",
+    "react": "cross-env BROWSER=none react-scripts start",
+    "electron": "electron .",
+    "build": "react-scripts build",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
+    "dist": "npm run build && electron-builder",
+    "dist:mac": "npm run build && electron-builder --mac",
+    "dist:win": "npm run build && electron-builder --win",
+    "dist:linux": "npm run build && electron-builder --linux"
+  },
+  "build": {
+    "appId": "com.csvprecision.converter",
+    "productName": "CSV Precision Converter",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "electron/**/*",
+      "build/**/*",
+      "node_modules/**/*",
+      "package.json"
+    ],
+    "mac": {
+      "category": "public.app-category.productivity"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
+      ],
+      "icon": "build/icon.ico"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "concurrently": "^7.6.0",
+    "cross-env": "^7.0.3",
+    "electron": "^39.2.4",
+    "electron-builder": "^26.0.12",
+    "gh-pages": "^6.3.0",
+    "wait-on": "^8.0.5"
+  },
+  "dependencies": {
+    "papaparse": "^5.5.3",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-scripts": "^5.0.1"
+  }
+}

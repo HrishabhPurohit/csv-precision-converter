@@ -1,0 +1,270 @@
+.csv-grid-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.csv-grid-container h3 {
+  margin: 0 0 1rem;
+  color: #333;
+  font-size: 1.1rem;
+}
+
+.empty-grid {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  background: #fafafa;
+}
+
+.upload-area {
+  text-align: center;
+  padding: 3rem;
+}
+
+.upload-area h3 {
+  color: #666;
+  margin: 0 0 1rem;
+  font-size: 1.5rem;
+}
+
+.upload-area p {
+  color: #999;
+  margin: 0 0 2rem;
+}
+
+.grid-wrapper {
+  flex: 1;
+  overflow: auto;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
+
+.csv-grid {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.csv-grid thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #f5f5f5;
+}
+
+.csv-grid th {
+  padding: 0.5rem;
+  text-align: center;
+  font-weight: 500;
+  border: 1px solid #ddd;
+  background: #f5f5f5;
+}
+
+.row-header {
+  background: #f9f9f9;
+  font-weight: 500;
+  text-align: center;
+  width: 50px;
+  position: sticky;
+  left: 0;
+  z-index: 5;
+}
+
+.col-header {
+  background: #f9f9f9;
+  font-weight: 500;
+  min-width: 80px;
+}
+
+.grid-cell {
+  padding: 0.25rem 0.5rem;
+  border: 1px solid #e0e0e0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  background: white;
+}
+
+.cell-content {
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.grid-cell:hover {
+  background: #f0f8ff;
+  border-color: #3498db;
+}
+
+.grid-cell.selected {
+  background: #e3f2fd;
+  border-color: #2196f3;
+  box-shadow: 0 0 0 1px #2196f3;
+}
+
+.grid-cell.item-row {
+  background: #fff3e0;
+}
+
+.grid-cell.item-row:hover {
+  background: #ffe0b2;
+}
+
+.grid-cell.mapped {
+  font-weight: 500;
+}
+
+.grid-cell.mapped-company-name {
+  background: #e8f5e9;
+  border-color: #4caf50;
+}
+
+.grid-cell.mapped-gst-number {
+  background: #e3f2fd;
+  border-color: #2196f3;
+}
+
+.grid-cell.mapped-invoice-date {
+  background: #fce4ec;
+  border-color: #e91e63;
+}
+
+.grid-cell.mapped-invoice-number {
+  background: #f3e5f5;
+  border-color: #9c27b0;
+}
+
+.grid-cell.mapped-item-name {
+  background: #fff8e1;
+  border-color: #ffc107;
+}
+
+.grid-cell.mapped-batch-number {
+  background: #e0f2f1;
+  border-color: #009688;
+}
+
+.grid-cell.mapped-mrp,
+.grid-cell.mapped-ptr,
+.grid-cell.mapped-pts,
+.grid-cell.mapped-total-amount {
+  background: #e1f5fe;
+  border-color: #03a9f4;
+}
+
+.grid-cell.mapped-quantity {
+  background: #f1f8e9;
+  border-color: #8bc34a;
+}
+
+/* Context Menu */
+.context-menu-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 99;
+}
+
+.context-menu {
+  position: fixed;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  padding: 0.5rem 0;
+  z-index: 100;
+  min-width: 200px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.menu-header {
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  color: #666;
+  border-bottom: 1px solid #e0e0e0;
+  margin-bottom: 0.25rem;
+}
+
+.context-menu button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 0.5rem 1rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s ease;
+}
+
+.context-menu button:hover {
+  background: #f5f5f5;
+}
+
+.menu-divider {
+  height: 1px;
+  background: #e0e0e0;
+  margin: 0.25rem 0;
+}
+
+/* Legend */
+.grid-legend {
+  background: #f9f9f9;
+  padding: 1rem;
+  border-radius: 6px;
+}
+
+.grid-legend h4 {
+  margin: 0 0 0.5rem;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.legend-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.legend-color {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+.legend-color.mapped-company-name {
+  background: #e8f5e9;
+  border-color: #4caf50;
+}
+
+.legend-color.mapped-gst-number {
+  background: #e3f2fd;
+  border-color: #2196f3;
+}
+
+.legend-color.mapped-invoice-date {
+  background: #fce4ec;
+  border-color: #e91e63;
+}
+
+.legend-color.item-row {
+  background: #fff3e0;
+  border-color: #ff9800;
+}
