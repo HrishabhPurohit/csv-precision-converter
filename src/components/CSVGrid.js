@@ -180,6 +180,12 @@ const CSVGrid = ({ data, onCellSelect, detectedItemRows, cellMappings, onFileUpl
             <button onClick={() => handleContextMenuSelect('TOTAL_AMOUNT')}>
               💲 Total Bill Amount
             </button>
+            <button onClick={() => handleContextMenuSelect('EXPIRY_DATE')}>
+              📅 Expiry Date
+            </button>
+            <button onClick={() => handleContextMenuSelect('HSN_CODE')}>
+              🔢 HSN Code
+            </button>
             <div className="menu-divider"></div>
             <button onClick={() => setContextMenu(null)}>❌ Cancel</button>
           </div>

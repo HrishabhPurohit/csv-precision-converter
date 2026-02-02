@@ -259,6 +259,44 @@ const MappingPanel = ({ mappings, itemRows, onConvert, onClearMapping }) => {
                 )}
               </div>
             </div>
+
+            <div className="mapping-item">
+              <label>📅 Expiry Date:</label>
+              <div className="mapping-value">
+                {mappings.EXPIRY_DATE ? (
+                  <>
+                    <span>{formatCellReference(mappings.EXPIRY_DATE)}</span>
+                    <button 
+                      className="btn-clear"
+                      onClick={() => onClearMapping('EXPIRY_DATE')}
+                    >
+                      Clear
+                    </button>
+                  </>
+                ) : (
+                  <span className="unmapped">Click expiry date cell (Optional)</span>
+                )}
+              </div>
+            </div>
+
+            <div className="mapping-item">
+              <label>🔢 HSN Code:</label>
+              <div className="mapping-value">
+                {mappings.HSN_CODE ? (
+                  <>
+                    <span>{formatCellReference(mappings.HSN_CODE)}</span>
+                    <button 
+                      className="btn-clear"
+                      onClick={() => onClearMapping('HSN_CODE')}
+                    >
+                      Clear
+                    </button>
+                  </>
+                ) : (
+                  <span className="unmapped">Click HSN code cell (Optional)</span>
+                )}
+              </div>
+            </div>
           </div>
         )}
       </div>
