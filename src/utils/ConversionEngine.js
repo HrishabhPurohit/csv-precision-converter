@@ -10,7 +10,7 @@ class ConversionEngine {
   }
 
   formatDate(dateStr) {
-    if (!dateStr) {
+    if (!dateStr || dateStr === '') {
       const today = new Date();
       const dd = String(today.getDate()).padStart(2, '0');
       const mm = String(today.getMonth() + 1).padStart(2, '0');
@@ -18,8 +18,27 @@ class ConversionEngine {
       return dd + mm + yyyy;
     }
 
-    // Try to parse various date formats
-    const cleaned = dateStr.toString().replace(/[^\d/\-]/g, '');
+    // Convert to string and remove any whitespace
+    const cleaned = dateStr.toString().trim().replace(/\s+/g, '');
+    
+    // Try DDMMYYYY (already in correct format - 8 digits, no separators)
+    if (/^\d{8}$/.test(cleaned)) {
+      const dd = cleaned.substring(0, 2);
+      const mm = cleaned.substring(2, 4);
+      const yyyy = cleaned.substring(4, 8);
+      
+      // Validate it's a reasonable date
+      const day = parseInt(dd);
+      const month = parseInt(mm);
+      const year = parseInt(yyyy);
+      
+      if (day >= 1 && day <= 31 && month >= 1 && month <= 12 && year >= 2000 && year <= 2099) {
+        return dd + mm + yyyy;
+      }
+    }
+    
+    // Remove non-digit characters for other formats
+    const digitsOnly = cleaned.replace(/[^\d]/g, '');
     
     // Try DD/MM/YYYY or DD-MM-YYYY
     let match = cleaned.match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
@@ -39,16 +58,16 @@ class ConversionEngine {
       return dd + mm + yyyy;
     }
 
-    // Try YYYYMMDD
-    match = cleaned.match(/^(\d{4})(\d{2})(\d{2})$/);
-    if (match) {
-      return match[3] + match[2] + match[1];
-    }
-
-    // Try DDMMYYYY
-    match = cleaned.match(/^(\d{2})(\d{2})(\d{4})$/);
-    if (match) {
-      return match[1] + match[2] + match[3];
+    // Try YYYYMMDD (convert to DDMMYYYY)
+    if (/^\d{8}$/.test(digitsOnly)) {
+      const yyyy = digitsOnly.substring(0, 4);
+      const mm = digitsOnly.substring(4, 6);
+      const dd = digitsOnly.substring(6, 8);
+      
+      const year = parseInt(yyyy);
+      if (year >= 1900 && year <= 2099) {
+        return dd + mm + yyyy;
+      }
     }
 
     // Fallback to today's date
