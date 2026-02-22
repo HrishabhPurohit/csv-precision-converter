@@ -79,17 +79,22 @@ const SettingsPanel = ({ onClose }) => {
     }
   };
 
-  const handleExport = () => {
-    const settings = settingsManager.exportSettings();
-    const blob = new Blob([JSON.stringify(settings, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `csv_converter_settings_${Date.now()}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-    setSuccess('Settings exported');
-    setTimeout(() => setSuccess(''), 3000);
+  const handleExport = async () => {
+    try {
+      const settings = await settingsManager.exportSettings();
+      const blob = new Blob([JSON.stringify(settings, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `csv_converter_settings_${Date.now()}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      setSuccess('Settings exported');
+      setTimeout(() => setSuccess(''), 3000);
+    } catch (error) {
+      console.error('Error exporting settings:', error);
+      setError('Failed to export settings');
+    }
   };
 
   const handleImport = (event) => {
@@ -97,16 +102,17 @@ const SettingsPanel = ({ onClose }) => {
     if (!file) return;
     
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = async (e) => {
       try {
         const settings = JSON.parse(e.target.result);
-        const success = settingsManager.importSettings(settings);
+        const success = await settingsManager.importSettings(settings);
         if (success) {
           loadAbbreviations();
           setSuccess('Settings imported successfully');
           setTimeout(() => setSuccess(''), 3000);
         }
       } catch (err) {
+        console.error('Error importing settings:', err);
         setError('Invalid settings file');
       }
     };

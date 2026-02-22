@@ -186,6 +186,12 @@ const CSVGrid = ({ data, onCellSelect, detectedItemRows, cellMappings, onFileUpl
             <button onClick={() => handleContextMenuSelect('HSN_CODE')}>
               🔢 HSN Code
             </button>
+            <button onClick={() => handleContextMenuSelect('IGST')}>
+              💹 IGST
+            </button>
+            <button onClick={() => handleContextMenuSelect('CGST')}>
+              💹 CGST
+            </button>
             <div className="menu-divider"></div>
             <button onClick={() => setContextMenu(null)}>❌ Cancel</button>
           </div>

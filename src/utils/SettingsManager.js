@@ -1,3 +1,5 @@
+import indexedDBManager from './IndexedDBManager';
+
 class SettingsManager {
   constructor() {
     this.STORAGE_KEY = 'csv_converter_settings';
@@ -25,38 +27,76 @@ class SettingsManager {
       'hetero': 'HTR'
     };
     
-    this.loadSettings();
+    this.companyAbbreviations = { ...this.DEFAULT_ABBREVIATIONS };
+    this.initialized = false;
+    this.initPromise = this.init();
   }
 
-  loadSettings() {
+  async init() {
+    try {
+      await indexedDBManager.init();
+      
+      // Try to migrate from localStorage if this is first time
+      const hasData = await indexedDBManager.getSetting('companyAbbreviations');
+      if (!hasData) {
+        await indexedDBManager.migrateFromLocalStorage();
+      }
+      
+      // Load settings from IndexedDB
+      await this.loadSettings();
+      this.initialized = true;
+    } catch (error) {
+      console.error('Error initializing IndexedDB, falling back to localStorage:', error);
+      this.loadSettingsFromLocalStorage();
+      this.initialized = true;
+    }
+  }
+
+  async ensureInitialized() {
+    if (!this.initialized) {
+      await this.initPromise;
+    }
+  }
+
+  async loadSettings() {
+    try {
+      const abbreviations = await indexedDBManager.getSetting('companyAbbreviations');
+      if (abbreviations) {
+        this.companyAbbreviations = { ...this.DEFAULT_ABBREVIATIONS, ...abbreviations };
+      }
+    } catch (error) {
+      console.error('Error loading settings from IndexedDB:', error);
+      this.loadSettingsFromLocalStorage();
+    }
+  }
+
+  loadSettingsFromLocalStorage() {
     try {
       const saved = localStorage.getItem(this.STORAGE_KEY);
       if (saved) {
         const settings = JSON.parse(saved);
         this.companyAbbreviations = { ...this.DEFAULT_ABBREVIATIONS, ...settings.companyAbbreviations };
-        this.templates = settings.templates || {};
-      } else {
-        this.companyAbbreviations = { ...this.DEFAULT_ABBREVIATIONS };
-        this.templates = {};
       }
     } catch (error) {
-      console.error('Error loading settings:', error);
-      this.companyAbbreviations = { ...this.DEFAULT_ABBREVIATIONS };
-      this.templates = {};
+      console.error('Error loading settings from localStorage:', error);
     }
   }
 
-  saveSettings() {
+  async saveSettings() {
     try {
-      const settings = {
-        companyAbbreviations: this.companyAbbreviations,
-        templates: this.templates
-      };
-      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(settings));
+      await indexedDBManager.saveSetting('companyAbbreviations', this.companyAbbreviations);
       return true;
     } catch (error) {
-      console.error('Error saving settings:', error);
-      return false;
+      console.error('Error saving settings to IndexedDB:', error);
+      // Fallback to localStorage
+      try {
+        const settings = { companyAbbreviations: this.companyAbbreviations };
+        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(settings));
+        return true;
+      } catch (localError) {
+        console.error('Error saving to localStorage:', localError);
+        return false;
+      }
     }
   }
 
@@ -127,98 +167,100 @@ class SettingsManager {
     return this.saveSettings();
   }
 
-  // Template Methods
-  saveCompanyTemplate(companyName, template) {
+  // Template Methods (using IndexedDB)
+  async saveCompanyTemplate(companyName, template) {
     if (!companyName || !template) return false;
     
-    const companyKey = companyName.toLowerCase().trim();
-    
-    if (!this.templates[companyKey]) {
-      this.templates[companyKey] = [];
+    try {
+      const templateWithMetadata = {
+        ...template,
+        company: companyName.toLowerCase().trim(),
+        companyName: companyName,
+        name: template.name || `Template ${Date.now()}`
+      };
+      
+      await indexedDBManager.saveTemplate(templateWithMetadata);
+      return true;
+    } catch (error) {
+      console.error('Error saving template:', error);
+      return false;
     }
-    
-    const templateWithMetadata = {
-      ...template,
-      id: Date.now().toString(),
-      companyName: companyName,
-      createdAt: new Date().toISOString(),
-      name: template.name || `Template ${this.templates[companyKey].length + 1}`
-    };
-    
-    this.templates[companyKey].push(templateWithMetadata);
-    return this.saveSettings();
   }
 
-  getCompanyTemplates(companyName) {
+  async getCompanyTemplates(companyName) {
     if (!companyName) return [];
-    const companyKey = companyName.toLowerCase().trim();
-    return this.templates[companyKey] || [];
-  }
-
-  getAllTemplates() {
-    const allTemplates = [];
-    for (const [company, templates] of Object.entries(this.templates)) {
-      templates.forEach(template => {
-        allTemplates.push({
-          ...template,
-          company: company
-        });
-      });
+    try {
+      const companyKey = companyName.toLowerCase().trim();
+      return await indexedDBManager.getTemplatesByCompany(companyKey);
+    } catch (error) {
+      console.error('Error getting company templates:', error);
+      return [];
     }
-    return allTemplates.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
   }
 
-  getTemplateById(templateId) {
-    for (const templates of Object.values(this.templates)) {
-      const template = templates.find(t => t.id === templateId);
-      if (template) return template;
+  async getAllTemplates() {
+    try {
+      return await indexedDBManager.getAllTemplates();
+    } catch (error) {
+      console.error('Error getting all templates:', error);
+      return [];
     }
-    return null;
   }
 
-  updateTemplate(templateId, updates) {
-    for (const templates of Object.values(this.templates)) {
-      const index = templates.findIndex(t => t.id === templateId);
-      if (index !== -1) {
-        templates[index] = { ...templates[index], ...updates, updatedAt: new Date().toISOString() };
-        return this.saveSettings();
+  async getTemplateById(templateId) {
+    try {
+      return await indexedDBManager.getTemplate(templateId);
+    } catch (error) {
+      console.error('Error getting template:', error);
+      return null;
+    }
+  }
+
+  async updateTemplate(templateId, updates) {
+    try {
+      const template = await indexedDBManager.getTemplate(templateId);
+      if (template) {
+        const updated = { ...template, ...updates };
+        await indexedDBManager.saveTemplate(updated);
+        return true;
       }
+      return false;
+    } catch (error) {
+      console.error('Error updating template:', error);
+      return false;
     }
-    return false;
   }
 
-  deleteTemplate(templateId) {
-    for (const [company, templates] of Object.entries(this.templates)) {
-      const index = templates.findIndex(t => t.id === templateId);
-      if (index !== -1) {
-        templates.splice(index, 1);
-        if (templates.length === 0) {
-          delete this.templates[company];
-        }
-        return this.saveSettings();
-      }
+  async deleteTemplate(templateId) {
+    try {
+      await indexedDBManager.deleteTemplate(templateId);
+      return true;
+    } catch (error) {
+      console.error('Error deleting template:', error);
+      return false;
     }
-    return false;
   }
 
   // Export/Import Settings
-  exportSettings() {
-    return {
-      companyAbbreviations: this.companyAbbreviations,
-      templates: this.templates,
-      exportedAt: new Date().toISOString()
-    };
+  async exportSettings() {
+    try {
+      return await indexedDBManager.exportAllData();
+    } catch (error) {
+      console.error('Error exporting settings:', error);
+      return {
+        companyAbbreviations: this.companyAbbreviations,
+        templates: [],
+        exportedAt: new Date().toISOString()
+      };
+    }
   }
 
-  importSettings(settings) {
+  async importSettings(data) {
     try {
-      if (settings.companyAbbreviations) {
-        this.companyAbbreviations = { ...this.DEFAULT_ABBREVIATIONS, ...settings.companyAbbreviations };
-      }
-      if (settings.templates) {
-        this.templates = { ...this.templates, ...settings.templates };
-      }
-      return this.saveSettings();
+      await indexedDBManager.importData(data);
+      // Reload settings after import
+      await this.loadSettings();
+      return true;
     } catch (error) {
       console.error('Error importing settings:', error);
       return false;

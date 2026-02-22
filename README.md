@@ -1,34 +1,34 @@
 # CSV Precision Converter
 
-A visual CSV converter with cell-level mapping designed specifically for medical invoice conversion. This desktop application allows you to precisely map cells from messy source CSVs to a strict target format.
+A professional web application for converting medical invoice CSV files to standardized formats. Built with React, featuring visual cell-level mapping and intelligent pattern detection.
+
+🌐 **Live Demo**: https://HrishabhPurohit.github.io/csv-precision-converter
 
 ## Features
 
-### 🎯 Visual Cell-Level Mapping
-- Click on any cell in the source CSV to map it
-- Context menu shows all available mapping options
-- Visual indicators show mapped cells with different colors
-- Auto-detection of item rows when you click on one
+### Visual CSV Mapping
+- **Interactive Grid View**: See your CSV data in a spreadsheet-like interface
+- **Cell-Level Mapping**: Click any cell to map it to output fields
+- **Pattern Detection**: Automatically detect and map similar item rows
+- **Real-time Preview**: See the converted output before exporting
 
-### 🧮 Automatic Tax Calculation
-- IGST: 2.5% of total bill amount
-- CGST: 2.5% of total bill amount
-- Total GST: 5% automatically calculated
+### Smart Conversion
+- **Company Recognition**: Automatically abbreviate company names (Intas → IPL, Dr. Reddy's → DRL, etc.)
+- **Flexible Date Formats**: Handles DD/MM/YYYY, YYYY-MM-DD, DDMMYYYY, and more
+- **Tax Mapping**: Map IGST/CGST from source or auto-calculate at 2.5%
+- **HSN Code Support**: Map or use default HSN codes for medicines
+- **Safe Defaults**: Robust validation prevents corrupted CSV output
 
-### 📊 Smart Item Row Detection
-- Click on any item row to auto-detect similar rows
-- Intelligent pattern matching finds all item entries
-- Works with irregular and unstructured CSVs
+### Template System
+- **Save Mappings**: Save your column mappings as templates
+- **Company-Specific**: Organize templates by company
+- **Quick Load**: Reuse templates for similar invoices
+- **Browser Storage**: Templates persist in your browser
 
-### 💾 Template System
-- Save your mappings as templates
-- Load templates for similar invoices
-- Speed up conversion for recurring formats
-
-### 🏢 Company Abbreviation Logic
-- Automatically generates company codes
-- IPL for Intas, DRL for Dr. Reddy's, CPL for Cipla, etc.
-- Extensible abbreviation system
+### User-Configurable Settings
+- **Custom Company Codes**: Add, edit, or remove company abbreviations
+- **Persistent Storage**: Settings saved in browser localStorage
+- **Import/Export**: Backup and restore your settings as JSON
 
 ## Target CSV Structure
 
@@ -89,14 +89,6 @@ After detecting item rows, click on specific cells to map:
 - Review the preview
 - Export as CSV
 
-## Keyboard Shortcuts
-
-- **Cmd/Ctrl+O** - Open CSV file
-- **Cmd/Ctrl+S** - Save mapping template
-- **Cmd/Ctrl+L** - Load mapping template
-- **Cmd/Ctrl+E** - Export converted CSV
-- **F12** - Toggle developer tools
-
 ## Color Legend
 
 - 🟢 Green - Company information
@@ -105,37 +97,44 @@ After detecting item rows, click on specific cells to map:
 - 🟡 Yellow - Item rows
 - 🔷 Light Blue - Price fields
 
-## Installation
+## Development
 
-### Development
+### Run Locally
 ```bash
 npm install
 npm start
+# Opens at http://localhost:3000
 ```
 
-### Production Build
+### Build for Production
 ```bash
-# Build for all platforms
-npm run dist
+npm run build
+# Creates optimized build in /build folder
+```
 
-# Platform-specific builds
-npm run dist:mac
-npm run dist:win
-npm run dist:linux
+### Deploy to GitHub Pages
+```bash
+npm run deploy
+# Deploys to https://HrishabhPurohit.github.io/csv-precision-converter
 ```
 
 ## Requirements
 
-- Node.js 16+ (Recommended: Node 18)
-- npm or yarn
-- For development: Chrome/Chromium browser
+- Modern web browser (Chrome, Firefox, Safari, Edge)
+- For development: Node.js 16+ (Recommended: Node 18)
 
 ## Technologies Used
 
-- **Electron** - Desktop application framework
 - **React** - User interface library
-- **Papa Parse** - CSV parsing
-- **Styled Components** - Styling (optional)
+- **Papa Parse** - CSV parsing and generation
+- **Browser APIs** - File handling and localStorage
+
+## Browser Compatibility
+
+- ✅ Chrome/Edge 90+
+- ✅ Firefox 88+
+- ✅ Safari 14+
+- ✅ Mobile browsers (iOS Safari, Chrome Mobile)
 
 ## Troubleshooting
 
@@ -143,6 +142,7 @@ npm run dist:linux
 - Check for null bytes in the source file
 - Ensure file is UTF-8 encoded
 - Try saving the CSV in a different program first
+- Check browser console for errors (F12)
 
 ### Item Rows Not Detected?
 - Make sure to click on a row with actual item data
@@ -150,9 +150,23 @@ npm run dist:linux
 - Manually map key columns if auto-detection fails
 
 ### Tax Calculations
-- IGST and CGST are always 2.5% each of the total amount
+- IGST and CGST can be mapped from source CSV
+- If not mapped, defaults to 2.5% each of the total amount
 - Total GST is 5% of the bill amount
 - Calculations are done on Column V values
+
+### Settings Not Persisting?
+- Ensure browser cookies/localStorage is enabled
+- Check browser privacy settings
+- Try a different browser
+
+## Privacy & Security
+
+- ✅ All processing happens in your browser
+- ✅ No data sent to servers
+- ✅ Files stay on your device
+- ✅ Settings stored locally only
+- ✅ Works completely offline after first load
 
 ## License
 

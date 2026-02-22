@@ -297,6 +297,44 @@ const MappingPanel = ({ mappings, itemRows, onConvert, onClearMapping }) => {
                 )}
               </div>
             </div>
+
+            <div className="mapping-item">
+              <label>💹 IGST:</label>
+              <div className="mapping-value">
+                {mappings.IGST ? (
+                  <>
+                    <span>{formatCellReference(mappings.IGST)}</span>
+                    <button 
+                      className="btn-clear"
+                      onClick={() => onClearMapping('IGST')}
+                    >
+                      Clear
+                    </button>
+                  </>
+                ) : (
+                  <span className="unmapped">Click IGST cell (Optional - defaults to 2.5%)</span>
+                )}
+              </div>
+            </div>
+
+            <div className="mapping-item">
+              <label>💹 CGST:</label>
+              <div className="mapping-value">
+                {mappings.CGST ? (
+                  <>
+                    <span>{formatCellReference(mappings.CGST)}</span>
+                    <button 
+                      className="btn-clear"
+                      onClick={() => onClearMapping('CGST')}
+                    >
+                      Clear
+                    </button>
+                  </>
+                ) : (
+                  <span className="unmapped">Click CGST cell (Optional - defaults to 2.5%)</span>
+                )}
+              </div>
+            </div>
           </div>
         )}
       </div>

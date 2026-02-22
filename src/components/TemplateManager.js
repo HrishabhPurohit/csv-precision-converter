@@ -22,23 +22,33 @@ const TemplateManager = ({
     loadCompanies();
   }, []);
 
-  const loadTemplates = () => {
-    const allTemplates = settingsManager.getAllTemplates();
-    setTemplates(allTemplates);
+  const loadTemplates = async () => {
+    try {
+      const allTemplates = await settingsManager.getAllTemplates();
+      setTemplates(allTemplates);
+    } catch (error) {
+      console.error('Error loading templates:', error);
+      setTemplates([]);
+    }
   };
 
-  const loadCompanies = () => {
-    const uniqueCompanies = new Set();
-    const allTemplates = settingsManager.getAllTemplates();
-    allTemplates.forEach(t => {
-      if (t.companyName) {
-        uniqueCompanies.add(t.companyName);
-      }
-    });
-    setCompanies(Array.from(uniqueCompanies));
+  const loadCompanies = async () => {
+    try {
+      const uniqueCompanies = new Set();
+      const allTemplates = await settingsManager.getAllTemplates();
+      allTemplates.forEach(t => {
+        if (t.companyName) {
+          uniqueCompanies.add(t.companyName);
+        }
+      });
+      setCompanies(Array.from(uniqueCompanies));
+    } catch (error) {
+      console.error('Error loading companies:', error);
+      setCompanies([]);
+    }
   };
 
-  const handleSaveTemplate = () => {
+  const handleSaveTemplate = async () => {
     setError('');
     setSuccess('');
 
@@ -60,15 +70,20 @@ const TemplateManager = ({
       createdAt: new Date().toISOString()
     };
 
-    const success = settingsManager.saveCompanyTemplate(currentCompany, template);
-    if (success) {
-      loadTemplates();
-      loadCompanies();
-      setTemplateName('');
-      setShowSave(false);
-      setSuccess(`Template "${templateName}" saved for ${currentCompany}`);
-      setTimeout(() => setSuccess(''), 3000);
-    } else {
+    try {
+      const success = await settingsManager.saveCompanyTemplate(currentCompany, template);
+      if (success) {
+        await loadTemplates();
+        await loadCompanies();
+        setTemplateName('');
+        setShowSave(false);
+        setSuccess(`Template "${templateName}" saved for ${currentCompany}`);
+        setTimeout(() => setSuccess(''), 3000);
+      } else {
+        setError('Failed to save template');
+      }
+    } catch (error) {
+      console.error('Error saving template:', error);
       setError('Failed to save template');
     }
   };
@@ -84,15 +99,20 @@ const TemplateManager = ({
     }
   };
 
-  const handleDeleteTemplate = (templateId) => {
+  const handleDeleteTemplate = async (templateId) => {
     const template = templates.find(t => t.id === templateId);
     if (window.confirm(`Delete template "${template.name}"?`)) {
-      const success = settingsManager.deleteTemplate(templateId);
-      if (success) {
-        loadTemplates();
-        loadCompanies();
-        setSuccess('Template deleted');
-        setTimeout(() => setSuccess(''), 3000);
+      try {
+        const success = await settingsManager.deleteTemplate(templateId);
+        if (success) {
+          await loadTemplates();
+          await loadCompanies();
+          setSuccess('Template deleted');
+          setTimeout(() => setSuccess(''), 3000);
+        }
+      } catch (error) {
+        console.error('Error deleting template:', error);
+        setError('Failed to delete template');
       }
     }
   };

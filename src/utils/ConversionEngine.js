@@ -134,43 +134,67 @@ class ConversionEngine {
       const row = sourceData[rowIndex];
       if (!row) return;
 
-      // Extract item details based on column mappings
-      const itemName = cellMappings.ITEM_NAME ? 
-        row[cellMappings.ITEM_NAME.col] || '' : '';
+      // Extract item details based on column mappings with safe defaults
+      const itemName = cellMappings.ITEM_NAME && row[cellMappings.ITEM_NAME.col] ? 
+        String(row[cellMappings.ITEM_NAME.col]).trim() : '';
       
-      const batchNumber = cellMappings.BATCH_NUMBER ? 
-        row[cellMappings.BATCH_NUMBER.col] || '' : '';
+      const batchNumber = cellMappings.BATCH_NUMBER && row[cellMappings.BATCH_NUMBER.col] ? 
+        String(row[cellMappings.BATCH_NUMBER.col]).trim() : '';
       
-      const mrp = cellMappings.MRP ? 
+      const mrp = cellMappings.MRP && row[cellMappings.MRP.col] !== undefined && row[cellMappings.MRP.col] !== '' ? 
         this.parseNumber(row[cellMappings.MRP.col]) : 0;
       
-      const ptr = cellMappings.PTR ? 
-        this.parseNumber(row[cellMappings.PTR.col]) : mrp * 0.6; // Default to 60% of MRP
+      const ptr = cellMappings.PTR && row[cellMappings.PTR.col] !== undefined && row[cellMappings.PTR.col] !== '' ? 
+        this.parseNumber(row[cellMappings.PTR.col]) : (mrp > 0 ? mrp * 0.6 : 0);
       
-      const pts = cellMappings.PTS ? 
-        this.parseNumber(row[cellMappings.PTS.col]) : mrp * 0.55; // Default to 55% of MRP
+      const pts = cellMappings.PTS && row[cellMappings.PTS.col] !== undefined && row[cellMappings.PTS.col] !== '' ? 
+        this.parseNumber(row[cellMappings.PTS.col]) : (mrp > 0 ? mrp * 0.55 : 0);
       
-      const quantity = cellMappings.QUANTITY ? 
+      const quantity = cellMappings.QUANTITY && row[cellMappings.QUANTITY.col] !== undefined && row[cellMappings.QUANTITY.col] !== '' ? 
         this.parseNumber(row[cellMappings.QUANTITY.col]) : 1;
       
-      const totalAmount = cellMappings.TOTAL_AMOUNT ? 
-        this.parseNumber(row[cellMappings.TOTAL_AMOUNT.col]) : ptr * quantity;
+      const totalAmount = cellMappings.TOTAL_AMOUNT && row[cellMappings.TOTAL_AMOUNT.col] !== undefined && row[cellMappings.TOTAL_AMOUNT.col] !== '' ? 
+        this.parseNumber(row[cellMappings.TOTAL_AMOUNT.col]) : (ptr > 0 ? ptr * quantity : 0);
       
-      // Calculate taxes (2.5% each on total bill amount)
-      const igst = this.calculateTax(totalAmount, 2.5);
-      const cgst = this.calculateTax(totalAmount, 2.5);
+      // Get IGST - use mapped amount if available, otherwise calculate at 2.5%
+      let igst;
+      if (cellMappings.IGST && row[cellMappings.IGST.col] !== undefined && row[cellMappings.IGST.col] !== '') {
+        // Use the mapped tax amount directly
+        igst = this.formatNumber(this.parseNumber(row[cellMappings.IGST.col]));
+      } else {
+        // No mapping - calculate at 2.5% rate
+        igst = this.calculateTax(totalAmount, 2.5);
+      }
+      
+      // Get CGST - use mapped amount if available, otherwise calculate at 2.5%
+      let cgst;
+      if (cellMappings.CGST && row[cellMappings.CGST.col] !== undefined && row[cellMappings.CGST.col] !== '') {
+        // Use the mapped tax amount directly
+        cgst = this.formatNumber(this.parseNumber(row[cellMappings.CGST.col]));
+      } else {
+        // No mapping - calculate at 2.5% rate
+        cgst = this.calculateTax(totalAmount, 2.5);
+      }
       
       grandTotal += totalAmount;
       totalIGST += parseFloat(igst);
       totalCGST += parseFloat(cgst);
 
-      // Get expiry date if available (format DDMMYYYY)
-      const expiryDate = cellMappings.EXPIRY_DATE ? 
-        this.formatDate(row[cellMappings.EXPIRY_DATE.col]) : '31122025';
+      // Get expiry date if available (format DDMMYYYY) with validation
+      let expiryDate = '31122025'; // Default expiry date
+      if (cellMappings.EXPIRY_DATE && row[cellMappings.EXPIRY_DATE.col] !== undefined && row[cellMappings.EXPIRY_DATE.col] !== '') {
+        const formattedDate = this.formatDate(row[cellMappings.EXPIRY_DATE.col]);
+        // Ensure it's 8 digits
+        expiryDate = /^\d{8}$/.test(formattedDate) ? formattedDate : '31122025';
+      }
 
-      // Get HSN code if available
-      const hsnCode = cellMappings.HSN_CODE ? 
-        row[cellMappings.HSN_CODE.col] || '30049099' : '30049099'; // Default HSN for medicines
+      // Get HSN code if available with validation
+      let hsnCode = '30049099'; // Default HSN for medicines
+      if (cellMappings.HSN_CODE && row[cellMappings.HSN_CODE.col] !== undefined && row[cellMappings.HSN_CODE.col] !== '') {
+        const rawHsn = String(row[cellMappings.HSN_CODE.col]).trim();
+        // Ensure HSN is valid (numeric, typically 4-8 digits)
+        hsnCode = /^\d{4,8}$/.test(rawHsn) ? rawHsn : '30049099';
+      }
 
       // Create Transaction row (T)
       const transactionRow = [

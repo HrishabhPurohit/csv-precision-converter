@@ -21,26 +21,7 @@ function App() {
   const [showSettings, setShowSettings] = useState(false);
   const [showTemplates, setShowTemplates] = useState(false);
 
-  useEffect(() => {
-    // Set up menu event listeners
-    if (window.electronAPI) {
-      window.electronAPI.onMenuAction((event, action) => {
-        if (action === 'menu-open-csv') {
-          handleOpenCSV();
-        } else if (action === 'menu-save-template') {
-          handleSaveTemplate();
-        } else if (action === 'menu-load-template') {
-          handleLoadTemplate();
-        } else if (action === 'menu-export') {
-          handleExport();
-        }
-      });
-
-      return () => {
-        window.electronAPI.removeAllListeners();
-      };
-    }
-  }, [cellMappings, convertedData]);
+  // Web app - no menu event listeners needed
 
   const handleOpenCSV = async () => {
     try {
@@ -195,24 +176,16 @@ function App() {
 
     const csvContent = convertedData.join('\n');
     
-    if (window.electronAPI) {
-      const filePath = await window.electronAPI.saveFileDialog('converted_invoice.csv', csvContent);
-      if (filePath) {
-        setSuccess('File exported successfully!');
-        setTimeout(() => setSuccess(null), 3000);
-      }
-    } else {
-      // Fallback for browser
-      const blob = new Blob([csvContent], { type: 'text/csv' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'converted_invoice.csv';
-      a.click();
-      URL.revokeObjectURL(url);
-      setSuccess('File downloaded successfully!');
-      setTimeout(() => setSuccess(null), 3000);
-    }
+    // Browser download
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'converted_invoice.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+    setSuccess('File downloaded successfully!');
+    setTimeout(() => setSuccess(null), 3000);
   };
 
   const handleSaveTemplate = async () => {
